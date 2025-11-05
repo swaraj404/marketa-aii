@@ -24,6 +24,18 @@
   font-family:brighten;
   src: url(./assets/fonts/Brighten.ttf);
 }
+@font-face {
+  font-family:reflow;
+  src: url(./assets/fonts/reflow.ttf);
+}
+@font-face {
+  font-family:baflen;
+  src: url(./assets/fonts/Baflen.otf);
+}
+@font-face {
+  font-family:caltine;
+  src: url(./assets/fonts/Caltine\ Guadi.otf);
+}
 body{
   background-color:black;
 }

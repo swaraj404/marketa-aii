@@ -9,9 +9,7 @@ export default function Navbar() {
   const ctaRef = useRef(null);
   const indicatorRef = useRef(null);
   const bgRef = useRef(null);
-//  const openApp = () => {
-//     window.open('marketa-ai.vercel.app', '_blank', 'noopener,noreferrer');
-//   };
+
   const navLinks = ['Overview', 'Features', 'Pricing', 'About'];
 
   // Track ScrollTriggers and entrance timeline for cleanup
@@ -223,11 +221,11 @@ export default function Navbar() {
           {/* Logo */}
           <a 
             ref={logoRef}
-            href="#home" 
+            href="/" 
             className="relative group flex items-center gap-1 opacity-0"  // Initial CSS hide for safety
           >
-            <span className="text-2xl font-bold text-[#FF6B35] tracking-tight">Marketa</span>
-            <span className="text-2xl font-bold text-white tracking-tight">Ai</span>
+            <span className="text-2xl font-[reflow] text-[#FF6B35] tracking-tight">Marketa</span>
+            <span className="text-2xl font-[reflow] text-white tracking-tight">Ai</span>
             <sup className="text-xs text-gray-400 ml-1">TM</sup>
           </a>
 
@@ -237,8 +235,8 @@ export default function Navbar() {
               <a
                 key={link}
                 ref={el => linkRefs.current[index] = el}
-                href={`#${link.toLowerCase()}`}
-                className="relative text-gray-300 hover:text-white text-sm font-medium tracking-wide transition-all duration-300 opacity-0"  // Initial CSS hide
+                href={`/${link.toLowerCase()}`}
+                className="relative text-gray-300 hover:text-white text-sm font-[reflow] tracking-wide transition-all duration-300 opacity-0"  // Initial CSS hide
               >
                 <span className="relative z-10">{link}</span>
                 
@@ -258,7 +256,7 @@ export default function Navbar() {
                 href="https://marketa-ai.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#FF6B35] to-[#E65100] text-white rounded-full font-semibold text-sm overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/30"
+                className="group relative inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#FF6B35] to-[#E65100] text-white rounded-full font-[reflow] text-sm overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/30"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-[#E65100] to-[#C43C00] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <span className="relative">Get Started</span>

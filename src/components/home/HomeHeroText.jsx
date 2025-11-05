@@ -12,7 +12,7 @@ const HomeHeroText = () => {
   const subtitle2Ref = useRef(null);
 
   useEffect(() => {
-    const titleText = 'MARKETA AI';
+    const titleText = 'Marketa Ai';
     const titleElement = titleRef.current;
     const isMobile = window.innerWidth < 768;
     const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
@@ -25,7 +25,7 @@ const HomeHeroText = () => {
       const span = document.createElement('span');
       span.textContent = char === ' ' ? '\u00A0' : char;
       span.style.display = 'inline-block';
-      span.className = 'font-[unbounded] text-[8vw] sm:text-[4.5vw]';
+      span.className = 'font-[unbounded] text-[9vw] sm:text-[4.5vw]';
       span.style.transformOrigin = 'center center';
       titleElement.appendChild(span);
       lettersRef.current.push(span);
@@ -189,7 +189,7 @@ const HomeHeroText = () => {
         {/* Main Title */}
         <div 
           ref={titleRef}
-          className="font-bold text-[12vw] sm:text-[10vw] md:text-[8vw] lg:text-[6.5vw] xl:text-[5.5vw] uppercase leading-none relative mb-4 sm:mb-6"
+          className="font-bold text-[12vw] sm:text-[10vw] md:text-[8vw] lg:text-[6.5vw] xl:text-[5.5vw] leading-none relative mb-4 sm:mb-6"
           style={{ 
             letterSpacing: '0.05em',
             fontWeight: '800'
@@ -199,7 +199,7 @@ const HomeHeroText = () => {
         {/* Subtitle 1 */}
         <div 
           ref={subtitleRef}
-          className="text-[6vw] sm:text-[5vw] md:text-[4vw] lg:text-[3vw] xl:text-[2.5vw] uppercase tracking-wider font-semibold text-gray-200 mb-2 sm:mb-3"
+          className="text-[5vw] sm:text-[4.2vw] md:text-[3.7vw] lg:text-[2.5vw] xl:text-[2.2vw]  tracking-wider font-[reflow] text-gray-200 mb-2 sm:mb-3"
           style={{ 
             letterSpacing: '0.1em'
           }}
@@ -210,7 +210,7 @@ const HomeHeroText = () => {
         {/* Subtitle 2 */}
         <div 
           ref={subtitle2Ref}
-          className="text-[4vw] sm:text-[3vw] md:text-[2.5vw] lg:text-[1.8vw] xl:text-[1.5vw] uppercase tracking-widest font-light text-gray-300"
+          className="text-[4vw] sm:text-[3vw] md:text-[2.5vw] lg:text-[1.8vw] xl:text-[1.5vw]  tracking-widest font-[reflow] text-gray-300"
           style={{ 
             letterSpacing: '0.15em'
           }}
