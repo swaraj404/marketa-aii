@@ -1253,7 +1253,8 @@ export default function Features() {
   }, []);
 
   const openApp = () => {
-    window.open('https://app.marketa.space', '_blank', 'noopener,noreferrer');
+     window.location.href = '/coming-soon';
+    // window.open('https://app.marketa.space', '_blank', 'noopener,noreferrer');
   };
 
   return (
