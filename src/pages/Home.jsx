@@ -19,7 +19,7 @@ const Home = () => {
       {showIntro && <LogoIntro onComplete={handleIntroComplete} />}
       
       <div className={`transition-opacity duration-1000 ${startMainAnimation ? 'opacity-100' : 'opacity-0'}`}>
-        {/* <Navbar/> */}
+        <Navbar/>
         <Hero/>
         {/* <Overview/> */}
         <Features/>
