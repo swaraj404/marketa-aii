@@ -186,7 +186,7 @@ const GettingStarted = () => {
 					start: 'top 40%',
 					end: 'top top',
 					scrub: 0,
-					markers: true,
+					markers: false,
                     
 				},
 				y: -300,
@@ -205,7 +205,7 @@ const GettingStarted = () => {
 				end: '+=100%',
 				pin: true,
 				pinSpacing: false,
-				markers: true,
+				markers: false,
 			});
 		});
 
