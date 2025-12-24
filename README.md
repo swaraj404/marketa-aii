@@ -1,16 +1,132 @@
-# React + Vite
+# Marketa.ai - Marketing AI Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, animated marketing website built with React, showcasing AI-powered marketing solutions.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Hero Section**: Animated text with video background
+- **Features Showcase**: Interactive, scroll-based feature cards
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Smooth Animations**: GSAP-powered scroll animations
 
-## React Compiler
+## 📦 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** - UI Library
+- **Vite** - Build tool
+- **Tailwind CSS** - Styling
+- **GSAP** - Animations
+- **React Router** - Navigation
+- **Lucide React** - Icons
 
-## Expanding the ESLint configuration
+## 🛠️ Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd marketa-aii
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+## 🚦 Running the Project
+
+### Development Mode
+```bash
+npm run dev
+```
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Production Build
+```bash
+npm run build
+```
+
+### Preview Production Build
+```bash
+npm run preview
+```
+
+## 📁 Project Structure
+
+```
+marketa-aii/
+├── src/
+│   ├── components/        # Reusable components
+│   │   ├── Hero.jsx      # Main hero section
+│   │   ├── HeroText.jsx  # Animated hero text
+│   │   ├── Video.jsx     # Background video
+│   │   ├── Features.jsx  # Features section
+│   │   ├── LogoIntro.jsx # Logo intro animation
+│   │   ├── Navbar.jsx    # Navigation bar
+│   │   ├── Overview.jsx  # Overview section
+│   │   └── ComingSoon.jsx # Coming soon page
+│   ├── pages/            # Page components
+│   │   └── Home.jsx      # Home page
+│   ├── assets/           # Static assets
+│   │   ├── fonts/        # Custom fonts
+│   │   ├── vid1.mp4      # Background video
+│   │   ├── vid2.mp4
+│   │   ├── vid3.mp4
+│   │   └── IMG_1966.png  # Logo
+│   ├── App.jsx           # Main app component
+│   ├── main.jsx          # Entry point
+│   └── index.css         # Global styles
+├── public/               # Public assets
+├── package.json          # Dependencies
+└── vite.config.js        # Vite configuration
+```
+
+## 🎨 Key Components
+
+### Home Page (`src/pages/Home.jsx`)
+- Entry point for the website
+- Manages logo intro animation state
+- Renders Hero and Features sections
+
+### Hero (`src/components/Hero.jsx`)
+- Video background with blur effects
+- Animated hero text
+- Responsive layout
+
+### Features (`src/components/Features.jsx`)
+- Scroll-triggered animations
+- Interactive feature cards
+- 6 main features displayed in a circular arrangement
+- Mobile and desktop responsive
+
+## 🔧 Configuration
+
+### Custom Fonts
+The project uses several custom fonts loaded via `@font-face` in `index.css`:
+- Unbounded
+- Ranade
+- Gavoline
+- Klaft
+- Mavinea
+- Nectron
+- Brighten
+- Reflow
+- Baflen
+- Caltine
+
+### Routes
+- `/` - Home page
+- `/coming-soon` - Coming soon page
+
+## 🌐 External Links
+- Production App: [https://app.marketa.space](https://app.marketa.space)
+
+## 📝 License
+
+Private project. All rights reserved.
+
+## 🤝 Contributing
+
+This is a private project. Contact the owner for contribution guidelines.
+
+---
+
+Built with ❤️ by Marketa.ai Team
