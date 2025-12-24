@@ -177,40 +177,51 @@ const GettingStarted = () => {
 
 	useEffect(() => {
 		const sections = featureRefs.current;
-
+		const isMobile = window.innerWidth < 1024; // lg breakpoint
+		
 		// Animate heading moving up and vanishing when scrolling to first feature
 		if (headingRef.current && sections[0]) {
 			gsap.to(headingRef.current, {
 				scrollTrigger: {
 					trigger: sections[0],
-					start: 'top 40%',
+					start: isMobile ? 'top 60%' : 'top 40%',
 					end: 'top top',
-					scrub: 0,
+					scrub: isMobile ? 0.5 : 0,
 					markers: false,
-                    
 				},
-				y: -300,
+				y: isMobile ? -150 : -300,
 				opacity: 0,
 				ease: 'none',
 			});
 		}
 
-		sections.forEach((section, index) => {
-			if (!section) return;
+		// Only pin on desktop/tablet landscape
+		if (!isMobile) {
+			sections.forEach((section, index) => {
+				if (!section) return;
 
-			// Pin each section so next one overlaps
-			ScrollTrigger.create({
-				trigger: section,
-				start: 'top top',
-				end: '+=100%',
-				pin: true,
-				pinSpacing: false,
-				markers: false,
+				// Pin each section so next one overlaps
+				ScrollTrigger.create({
+					trigger: section,
+					start: 'top top',
+					end: '+=100%',
+					pin: true,
+					pinSpacing: false,
+					markers: false,
+				});
 			});
-		});
+		}
+
+		// Refresh ScrollTrigger on resize
+		const handleResize = () => {
+			ScrollTrigger.refresh();
+		};
+
+		window.addEventListener('resize', handleResize);
 
 		return () => {
 			ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+			window.removeEventListener('resize', handleResize);
 		};
 	}, []);
 
@@ -236,9 +247,9 @@ const GettingStarted = () => {
 	};
 
 	return (
-		<section ref={sectionRef} className="relative bg-white text-black py-20">
-			<div ref={headingRef} className="max-w-1xl mx-auto py-1 px-1 ">
-				<h2 className="text-[10rem] lg:text-8xl font-mono mb-3 max-w-4xl text-black">
+		<section ref={sectionRef} className="relative bg-white text-black py-8 sm:py-12 md:py-16 lg:py-20">
+			<div ref={headingRef} className="max-w-7xl mx-auto py-4 px-4 sm:px-6 md:px-8 lg:px-12">
+				<h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-[10rem] font-mono mb-3 max-w-full text-black leading-tight">
 					Getting Started is Easy
 				</h2>
 			</div>
@@ -248,43 +259,43 @@ const GettingStarted = () => {
 					ref={(el) => (featureRefs.current[index] = el)}
 					className="min-h-screen overflow-hidden"
 				>
-					<div className="w-full h-screen relative bg-white">
-						{/* Left Section - Absolute positioned at top-left */}
-						<div className="absolute top-0 left-0 w-1/2 h-full flex items-start pt-16 pl-16">
-							<div className="space-y-9 max-w-2xl">
+					<div className="w-full min-h-screen relative bg-white flex flex-col lg:flex-row">
+						{/* Left Section - Responsive positioning */}
+						<div className="w-full lg:w-1/2 flex items-start p-4 sm:p-6 md:p-8 lg:pt-16 lg:pl-16 lg:absolute lg:top-0 lg:left-0 lg:h-full">
+							<div className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-9 max-w-2xl">
 								{/* Step Indicator */}
-								<div className="flex items-center gap-3">
-									<div className="w-12 h-12 rounded-full border-2 border-orange-500 flex items-center justify-center">
-										<span className="text-orange-500 font-semibold">
+								<div className="flex items-center gap-2 sm:gap-3">
+									<div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-2 border-orange-500 flex items-center justify-center shrink-0">
+										<span className="text-orange-500 font-semibold text-sm sm:text-base">
 											{feature.step}
 										</span>
 									</div>
-									<div className="flex-1 h-px bg-gray-300 max-w-[100px]"></div>
-									<div className="text-xs uppercase tracking-wider text-gray-600 font-semibold">
+									<div className="flex-1 h-px bg-gray-300 max-w-[60px] sm:max-w-20 md:max-w-[100px]"></div>
+									<div className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-600 font-semibold whitespace-nowrap">
 										Step {feature.step} of {features.length}
 									</div>
 								</div>
 
 								{/* Main Content */}
 								<div>
-									<h1 className="text-5xl lg:text-6xl font-light leading-tight mb-4 text-black">
+									<h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight mb-2 sm:mb-3 md:mb-4 text-black">
 										{feature.title}
 									</h1>
-									<p className="text-xl text-orange-500 font-light">
+									<p className="text-base sm:text-lg md:text-xl text-orange-500 font-light">
 										{feature.subtitle}
 									</p>
 								</div>
 
 								{/* Description */}
-								<p className="text-xl text-gray-700 leading-relaxed">
+								<p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 leading-relaxed">
 									{feature.description}
 								</p>
 
 								{/* Bullet Points */}
-								<ul className="space-y-3 text-gray-700">
+								<ul className="space-y-2 sm:space-y-3 text-gray-700 text-sm sm:text-base md:text-lg">
 									{feature.bullets.map((bullet, i) => (
-										<li key={i} className="flex items-start gap-3">
-											<span className="w-2 h-2 rounded-full bg-orange-500 mt-2 shrink-0"></span>
+										<li key={i} className="flex items-start gap-2 sm:gap-3">
+											<span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-orange-500 mt-1.5 sm:mt-2 shrink-0"></span>
 											<span>{bullet}</span>
 										</li>
 									))}
@@ -299,42 +310,42 @@ const GettingStarted = () => {
 							</div>
 						</div>
 
-						{/* Right Section - Absolute positioned at bottom-right corner */}
-						<div className="absolute bottom-8 right-8 w-[55vw] h-[70vh]">
-							<div className="relative w-full h-full">
-								<div className="relative bg-white rounded-2xl border border-gray-300 shadow-2xl overflow-hidden w-full h-full">
+						{/* Right Section - Responsive positioning */}
+						<div className="w-full lg:w-[55vw] lg:h-[70vh] mt-8 lg:mt-0 lg:absolute lg:bottom-4 lg:right-4 xl:bottom-8 xl:right-8 p-4 lg:p-0">
+							<div className="relative w-full h-full min-h-[400px] sm:min-h-[500px] md:min-h-[600px] lg:min-h-0">
+								<div className="relative bg-white rounded-xl sm:rounded-2xl border border-gray-300 shadow-2xl overflow-hidden w-full h-full">
 									{/* Browser Chrome */}
-									<div className="bg-gray-100 px-4 py-3 border-b border-gray-300 flex items-center gap-2">
-										<div className="flex items-center gap-2">
-											<div className="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
-											<div className="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
-											<div className="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
+									<div className="bg-gray-100 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 border-b border-gray-300 flex items-center gap-1.5 sm:gap-2">
+										<div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+											<div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-orange-500"></div>
+											<div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-orange-500"></div>
+											<div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-orange-500"></div>
 										</div>
 									</div>
 
 									{/* Modal Content */}
-									<div className="p-12">
-										<div className="bg-orange-50 rounded-xl p-6 backdrop-blur-sm border border-orange-200">
+									<div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-12">
+										<div className="bg-orange-50 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 lg:p-6 backdrop-blur-sm border border-orange-200">
 											{/* Progress Dots */}
-											<div className="flex items-center justify-center gap-2 mb-6">
+											<div className="flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
 												<div
-													className={`w-2 h-2 rounded-full ${
+													className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
 														feature.step === 1
 															? 'bg-orange-500'
 															: 'bg-gray-300'
 													}`}
 												></div>
-												<div className="flex-1 h-px bg-gray-300 max-w-[50px]"></div>
+												<div className="flex-1 h-px bg-gray-300 max-w-[30px] sm:max-w-10 md:max-w-[50px]"></div>
 												<div
-													className={`w-2 h-2 rounded-full ${
+													className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
 														feature.step === 2
 															? 'bg-orange-500'
 															: 'bg-gray-300'
 													}`}
 												></div>
-												<div className="flex-1 h-px bg-gray-300 max-w-[50px]"></div>
+												<div className="flex-1 h-px bg-gray-300 max-w-[30px] sm:max-w-10 md:max-w-[50px]"></div>
 												<div
-													className={`w-2 h-2 rounded-full ${
+													className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
 														feature.step >= 3
 															? 'bg-orange-500'
 															: 'bg-gray-300'
@@ -343,47 +354,47 @@ const GettingStarted = () => {
 											</div>
 
 											{/* Icon Row */}
-											<div className="flex items-center justify-center gap-3 mb-6">
+											<div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
 												{feature.mockIcons.map((item, i) => (
 													<React.Fragment key={i}>
 														<div
-															className={`w-14 h-14 rounded-lg flex items-center justify-center ${getColorClasses(
+															className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-md sm:rounded-lg flex items-center justify-center ${getColorClasses(
 																item.color
 															)}`}
 														>
-															<item.Icon className="w-7 h-7" />
+															<item.Icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
 														</div>
 														{i < feature.mockIcons.length - 1 && (
-															<div className="flex-1 h-px bg-gray-300 max-w-8"></div>
+															<div className="flex-1 h-px bg-gray-300 max-w-4 sm:max-w-6 md:max-w-8"></div>
 														)}
 													</React.Fragment>
 												))}
 											</div>
 
 											{/* Title */}
-											<h3 className="text-center text-base font-medium mb-1.5 text-black">
+											<h3 className="text-center text-xs sm:text-sm md:text-base font-medium mb-1 sm:mb-1.5 text-black">
 												{feature.mockTitle}
 											</h3>
-											<p className="text-center text-xs text-gray-600 mb-6">
+											<p className="text-center text-[10px] sm:text-xs text-gray-600 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
 												{feature.mockDescription}
 											</p>
 
 											{/* Feature Buttons Grid */}
-											<div className="grid grid-cols-2 gap-3">
+											<div className="grid grid-cols-2 gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3">
 												{feature.mockButtons.map((button, i) => (
 													<button
 														key={i}
 														className={`${getButtonColorClasses(
 															button.disabled
-														)} border rounded-lg p-4 transition-all duration-200 flex items-center justify-center gap-2 ${
+														)} border rounded-md sm:rounded-lg p-2 sm:p-2.5 md:p-3 lg:p-4 transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 ${
 															button.disabled
 																? ''
 																: 'hover:border-orange-500/50'
 														}`}
 														disabled={button.disabled}
 													>
-														<button.icon className="w-5 h-5" />
-														<span className="font-medium text-sm">
+														<button.icon className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 shrink-0" />
+														<span className="font-medium text-[10px] sm:text-xs md:text-sm truncate">
 															{button.label}
 														</span>
 													</button>
@@ -391,11 +402,11 @@ const GettingStarted = () => {
 											</div>
 
 											{/* Action Buttons */}
-											<div className="flex items-center justify-between mt-6 pt-5 border-t border-orange-200">
-												<button className="text-sm text-gray-600 hover:text-orange-500 transition-colors">
+											<div className="flex items-center justify-between mt-3 sm:mt-4 md:mt-5 lg:mt-6 pt-3 sm:pt-4 md:pt-5 border-t border-orange-200">
+												<button className="text-[10px] sm:text-xs md:text-sm text-gray-600 hover:text-orange-500 transition-colors">
 													{feature.step > 1 ? 'Back' : 'Skip'}
 												</button>
-												<button className="text-sm text-gray-600 hover:text-orange-500 transition-colors">
+												<button className="text-[10px] sm:text-xs md:text-sm text-gray-600 hover:text-orange-500 transition-colors">
 													{feature.step < features.length
 														? 'Continue'
 														: 'Finish'}
@@ -409,7 +420,7 @@ const GettingStarted = () => {
 								</div>
 
 								{/* Outer Glow Effect */}
-								<div className="absolute -inset-4 bg-orange-500/10 rounded-3xl blur-2xl -z-10"></div>
+								<div className="absolute -inset-2 sm:-inset-3 md:-inset-4 bg-orange-500/10 rounded-2xl sm:rounded-3xl blur-xl sm:blur-2xl -z-10"></div>
 							</div>
 						</div>
 					</div>
