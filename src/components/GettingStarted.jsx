@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bot, CreditCard, Sparkles, MessageSquare, Image, TrendingUp, Database, FileText, Lock, Shield, Package, BarChart, DollarSign, Target, Users, Mail, Palette } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -174,6 +174,105 @@ const GettingStarted = () => {
 	const sectionRef = useRef(null);
 	const headingRef = useRef(null);
 	const featureRefs = useRef([]);
+	const [animatedText, setAnimatedText] = useState('व्यापार');
+
+	// Text scramble animation effect
+	useEffect(() => {
+		const words = [
+			'ব্যবসা',      // Bengali - Byabosa (Business)
+			'ਕਾਰੋਬਾਰ',     // Punjabi - Karobar (Business)
+			'వ్యాపారం',    // Telugu - Vyaparam (Business)
+			'வணிகம்',      // Tamil - Vanigam (Business)
+			'ವ್ಯಾಪಾರ',     // Kannada - Vyapara (Business)
+			'ବ୍ୟବସାୟ',     // Odia - Byabasaya (Business)
+			'વેપાર',       // Gujarati - Vepar (Business)
+			'Vyapar',      // English
+			'व्यापार'      // Hindi/Marathi - Business (Final)
+		];
+		let currentIndex = 0;
+		let loopCount = 0;
+		const maxLoops = 2; // Loop twice
+		const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()व्यापारअआइईउऊएऐओऔकखगघचछजझटठडढणతథదధనపఫబభవశషসহবযরলকগঘচછજ఼జఝਕਖਗਘਚਛವಯರಲಶಷసహగଘଚછજવયરલશષસહதథదనపభమಯरलवಶಷಸಹ';
+		
+		const scrambleText = (start, end) => {
+			const startText = start;
+			const endText = end;
+			const maxLength = Math.max(startText.length, endText.length);
+			let frame = 0;
+			const totalFrames = 50; // Increased from 30 for smoother animation
+			
+			const animate = () => {
+				if (frame <= totalFrames) {
+					let scrambled = '';
+					const progress = frame / totalFrames;
+					// Use easing function for smoother transition
+					const easedProgress = progress < 0.5 
+						? 2 * progress * progress 
+						: 1 - Math.pow(-2 * progress + 2, 2) / 2;
+					
+					for (let i = 0; i < maxLength; i++) {
+						if (i < endText.length) {
+							if (easedProgress * maxLength > i) {
+								scrambled += endText[i];
+							} else {
+								scrambled += chars[Math.floor(Math.random() * chars.length)];
+							}
+						}
+					}
+					
+					setAnimatedText(scrambled);
+					frame++;
+					requestAnimationFrame(animate);
+				} else {
+					setAnimatedText(endText);
+				}
+			};
+			
+			animate();
+		};
+		
+		// Intersection Observer to detect when heading is visible
+		let interval;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting && !interval) {
+						// Start animation when visible
+						interval = setInterval(() => {
+							if (currentIndex < words.length - 1) {
+								const nextIndex = currentIndex + 1;
+								scrambleText(words[currentIndex], words[nextIndex]);
+								currentIndex = nextIndex;
+								
+								// Check if we've completed one full cycle
+								if (nextIndex === words.length - 1) {
+									loopCount++;
+									
+									// Stop after 2 complete loops
+									if (loopCount >= maxLoops) {
+										clearInterval(interval);
+									} else {
+										// Reset to beginning for next loop
+										currentIndex = 0;
+									}
+								}
+							}
+						}, 500); // Increased from 500ms to 1200ms for smoother, more visible transitions
+					}
+				});
+			},
+			{ threshold: 0.5 } // Trigger when 50% of the heading is visible
+		);
+		
+		if (headingRef.current) {
+			observer.observe(headingRef.current);
+		}
+		
+		return () => {
+			if (interval) clearInterval(interval);
+			if (headingRef.current) observer.unobserve(headingRef.current);
+		};
+	}, []);
 
 	useEffect(() => {
 		const sections = featureRefs.current;
@@ -248,9 +347,12 @@ const GettingStarted = () => {
 
 	return (
 		<section ref={sectionRef} className="relative bg-white text-black py-8 sm:py-12 md:py-16 lg:py-20">
-			<div ref={headingRef} className="max-w-7xl mx-auto py-4 px-4 sm:px-6 md:px-8 lg:px-12">
-				<h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-[10rem] font-mono mb-3 max-w-full text-black leading-tight">
-					Getting Started is Easy
+			<div ref={headingRef} className="max-w-10xl mx-auto py-4 px-4 sm:px-6 md:px-8 lg:px-12">
+				<h2 
+					className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-[10rem] mb-3 max-w-full text-black leading-tight"
+					style={{ fontFamily: 'klaft, sans-serif' }}
+				>
+					Built for <span className="inline-block min-w-[200px] sm:min-w-[300px] md:min-w-[400px] lg:min-w-[500px] xl:min-w-[600px] 2xl:min-w-[800px] text-orange-500">{animatedText}</span>
 				</h2>
 			</div>
 			{features.map((feature, index) => (

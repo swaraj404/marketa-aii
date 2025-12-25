@@ -1,4 +1,11 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-klaft: klaft;
+  }
+}
+
 @font-face {
   font-family: unbounded;
   src: url(./assets/fonts/ubounded.ttf);
