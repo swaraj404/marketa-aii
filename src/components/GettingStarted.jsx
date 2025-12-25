@@ -276,7 +276,6 @@ const GettingStarted = () => {
 
 	useEffect(() => {
 		const sections = featureRefs.current;
-		const isMobile = window.innerWidth < 1024; // lg breakpoint
 		
 		// Calculate sticky header height
 		const getStickyHeaderHeight = () => {
@@ -286,49 +285,101 @@ const GettingStarted = () => {
 			return 0;
 		};
 
-		// Only pin on desktop/tablet landscape
-		if (!isMobile) {
-			const headerHeight = getStickyHeaderHeight();
+		// Detect device type and screen size
+		const getDeviceConfig = () => {
+			const width = window.innerWidth;
 			
-			sections.forEach((section, index) => {
-				if (!section) return;
+			// Mobile devices (portrait and landscape)
+			if (width < 768) {
+				return {
+					shouldPin: false,
+					endDistance: '+=100%'
+				};
+			}
+			// Tablets (portrait)
+			else if (width >= 768 && width < 1024) {
+				return {
+					shouldPin: true,
+					endDistance: '+=150%'
+				};
+			}
+			// Tablets (landscape) and small laptops
+			else if (width >= 1024 && width < 1440) {
+				return {
+					shouldPin: true,
+					endDistance: '+=200%'
+				};
+			}
+			// Large laptops and desktops
+			else {
+				return {
+					shouldPin: true,
+					endDistance: '+=250%'
+				};
+			}
+		};
 
-				// Set initial padding to account for sticky header
-				section.style.paddingTop = `${headerHeight}px`;
-
-				// Pin each section so next one overlaps completely
-				ScrollTrigger.create({
-					trigger: section,
-					start: 'top top',
-					end: () => {
-						// Increase scroll distance so previous section stays pinned longer
-						// This prevents the previous feature from moving up when the next one overlaps
-						if (index === sections.length - 1) {
-							return '+=300%'; // Last section gets even more scroll distance
-						}
-						return '+=200%'; // Each section needs 200% scroll distance to prevent early unpinning
-					},
-					pin: true,
-					pinSpacing: false,
-					markers: false,
-					pinnedContainer: section,
-					anticipatePin: 1,
-				});
-			});
-		}
-
-		// Refresh ScrollTrigger on resize
-		const handleResize = () => {
-			ScrollTrigger.refresh();
-			// Recalculate padding on resize
-			if (!isMobile) {
+		const initScrollTrigger = () => {
+			const config = getDeviceConfig();
+			
+			if (config.shouldPin) {
 				const headerHeight = getStickyHeaderHeight();
+				
+				sections.forEach((section, index) => {
+					if (!section) return;
+
+					// Set initial padding to account for sticky header
+					section.style.paddingTop = `${headerHeight}px`;
+
+					// Pin each section so next one overlaps completely
+					ScrollTrigger.create({
+						trigger: section,
+						start: 'top top',
+						end: () => {
+							// Last section gets extra scroll distance
+							if (index === sections.length - 1) {
+								const baseDistance = parseInt(config.endDistance.replace(/[^\d]/g, ''));
+								return `+=${baseDistance + 50}%`;
+							}
+							return config.endDistance;
+						},
+						pin: true,
+						pinSpacing: false,
+						markers: false,
+						pinnedContainer: section,
+						anticipatePin: 1,
+						// Smooth scrolling for better performance
+						fastScrollEnd: true,
+						preventOverlaps: true,
+					});
+				});
+			} else {
+				// On mobile, remove padding and let sections flow naturally
 				sections.forEach((section) => {
 					if (section) {
-						section.style.paddingTop = `${headerHeight}px`;
+						section.style.paddingTop = '0px';
 					}
 				});
 			}
+		};
+
+		// Initialize ScrollTrigger
+		initScrollTrigger();
+
+		// Debounced resize handler for better performance
+		let resizeTimeout;
+		const handleResize = () => {
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(() => {
+				// Kill all existing ScrollTriggers before recreating
+				ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+				
+				// Reinitialize with new device config
+				initScrollTrigger();
+				
+				// Refresh ScrollTrigger
+				ScrollTrigger.refresh();
+			}, 250); // Debounce for 250ms
 		};
 
 		window.addEventListener('resize', handleResize);
@@ -336,6 +387,7 @@ const GettingStarted = () => {
 		return () => {
 			ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 			window.removeEventListener('resize', handleResize);
+			if (resizeTimeout) clearTimeout(resizeTimeout);
 		};
 	}, []);
 
