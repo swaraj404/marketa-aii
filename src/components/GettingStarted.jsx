@@ -175,6 +175,7 @@ const GettingStarted = () => {
 	const headingRef = useRef(null);
 	const featureRefs = useRef([]);
 	const [animatedText, setAnimatedText] = useState('व्यापार');
+	const [visibleSteps, setVisibleSteps] = useState([1]); // Initially only step 1 is visible
 
 	// Text scramble animation effect
 	useEffect(() => {
@@ -292,8 +293,8 @@ const GettingStarted = () => {
 			// Mobile devices (portrait and landscape)
 			if (width < 768) {
 				return {
-					shouldPin: false,
-					endDistance: '+=100%'
+					shouldPin: true,
+					endDistance: '+=120%' // Shorter for mobile to keep it smooth
 				};
 			}
 			// Tablets (portrait)
@@ -321,46 +322,53 @@ const GettingStarted = () => {
 
 		const initScrollTrigger = () => {
 			const config = getDeviceConfig();
+			const headerHeight = getStickyHeaderHeight();
 			
-			if (config.shouldPin) {
-				const headerHeight = getStickyHeaderHeight();
-				
-				sections.forEach((section, index) => {
-					if (!section) return;
+			sections.forEach((section, index) => {
+				if (!section) return;
 
-					// Set initial padding to account for sticky header
-					section.style.paddingTop = `${headerHeight}px`;
+				// Set initial padding to account for sticky header on all devices
+				section.style.paddingTop = `${headerHeight}px`;
 
-					// Pin each section so next one overlaps completely
-					ScrollTrigger.create({
-						trigger: section,
-						start: 'top top',
-						end: () => {
-							// Last section gets extra scroll distance
-							if (index === sections.length - 1) {
-								const baseDistance = parseInt(config.endDistance.replace(/[^\d]/g, ''));
-								return `+=${baseDistance + 50}%`;
+				// Pin each section so next one overlaps completely
+				ScrollTrigger.create({
+					trigger: section,
+					start: 'top top',
+					end: () => {
+						// Last section gets extra scroll distance
+						if (index === sections.length - 1) {
+							const baseDistance = parseInt(config.endDistance.replace(/[^\d]/g, ''));
+							return `+=${baseDistance + 50}%`;
+						}
+						return config.endDistance;
+					},
+					pin: true,
+					pinSpacing: false,
+					markers: false,
+					pinnedContainer: section,
+					anticipatePin: 1,
+					// Smooth scrolling for better performance
+					fastScrollEnd: true,
+					preventOverlaps: true,
+					// Animate step indicator when feature enters
+					onEnter: () => {
+						const stepNumber = index + 1;
+						setVisibleSteps(prev => {
+							if (!prev.includes(stepNumber)) {
+								return [...prev, stepNumber];
 							}
-							return config.endDistance;
-						},
-						pin: true,
-						pinSpacing: false,
-						markers: false,
-						pinnedContainer: section,
-						anticipatePin: 1,
-						// Smooth scrolling for better performance
-						fastScrollEnd: true,
-						preventOverlaps: true,
-					});
+							return prev;
+						});
+					},
+					// Optional: Remove step when scrolling back up
+					onLeaveBack: () => {
+						if (index > 0) {
+							const stepNumber = index + 1;
+							setVisibleSteps(prev => prev.filter(step => step !== stepNumber));
+						}
+					},
 				});
-			} else {
-				// On mobile, remove padding and let sections flow naturally
-				sections.forEach((section) => {
-					if (section) {
-						section.style.paddingTop = '0px';
-					}
-				});
-			}
+			});
 		};
 
 		// Initialize ScrollTrigger
@@ -423,23 +431,49 @@ const GettingStarted = () => {
 				</h2>
 			{/* Step Indicators - Fixed Horizontal Navigation */}
 			<div className="bg-white py-2 sm:py-3 md:py-4 px-4 sm:px-6 md:px-8 lg:px-12">
-				<div className="max-w-7xl mx-auto flex items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
-					{features.map((feature, index) => (
-						<div key={feature.step} className="flex items-center gap-2 sm:gap-3">
-							<div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300 ${
-								index === 0 ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
-							}`}>
-								<span className={`font-semibold text-xs sm:text-sm ${
-									index === 0 ? 'text-white' : 'text-gray-400'
+				<div className="max-w-7xl mx-auto flex items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 overflow-hidden">
+					{features.map((feature, index) => {
+						const isVisible = visibleSteps.includes(feature.step);
+						const isActive = visibleSteps[visibleSteps.length - 1] === feature.step;
+						
+						return (
+							<div 
+								key={feature.step} 
+								className={`flex items-center gap-2 sm:gap-3 transition-all duration-700 ease-out ${
+									isVisible 
+										? 'translate-x-0 opacity-100' 
+										: 'translate-x-[200%] opacity-0'
+								}`}
+								style={{
+									transitionDelay: isVisible ? `${index * 100}ms` : '0ms'
+								}}
+							>
+								<div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-500 ${
+									isActive 
+										? 'border-orange-500 bg-orange-500 scale-110' 
+										: isVisible 
+											? 'border-gray-400 bg-transparent' 
+											: 'border-gray-300'
 								}`}>
-									{feature.step}
-								</span>
+									<span className={`font-semibold text-xs sm:text-sm transition-colors duration-300 ${
+										isActive ? 'text-white' : 'text-gray-400'
+									}`}>
+										{feature.step}
+									</span>
+								</div>
+								{index < features.length - 1 && isVisible && (
+									<div className={`hidden sm:block w-8 md:w-12 lg:w-16 h-px bg-gray-300 transition-all duration-500 ${
+										isVisible ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'
+									}`}
+									style={{
+										transformOrigin: 'left',
+										transitionDelay: isVisible ? `${index * 100 + 200}ms` : '0ms'
+									}}
+									></div>
+								)}
 							</div>
-							{index < features.length - 1 && (
-								<div className="hidden sm:block w-8 md:w-12 lg:w-16 h-px bg-gray-300"></div>
-							)}
-						</div>
-					))}
+						);
+					})}
 				</div>
 			</div>
 			</div>
