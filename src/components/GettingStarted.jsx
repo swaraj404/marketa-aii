@@ -191,7 +191,7 @@ const GettingStarted = () => {
 		];
 		let currentIndex = 0;
 		let loopCount = 0;
-		const maxLoops = 2; // Loop twice
+		const maxLoops = 1; // Loop twice
 		const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()व्यापारअआइईउऊएऐओऔकखगघचछजझटठडढणతథదధనపఫబభవశషসহবযরলকগঘচછજ఼జఝਕਖਗਘਚਛವಯರಲಶಷసహగଘଚછજવયરલશષસહதథదనపభమಯरलवಶಷಸಹ';
 		
 		const scrambleText = (start, end) => {
