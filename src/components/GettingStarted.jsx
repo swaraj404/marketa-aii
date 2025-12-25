@@ -278,35 +278,41 @@ const GettingStarted = () => {
 		const sections = featureRefs.current;
 		const isMobile = window.innerWidth < 1024; // lg breakpoint
 		
-		// Animate heading moving up and vanishing when scrolling to first feature
-		if (headingRef.current && sections[0]) {
-			gsap.to(headingRef.current, {
-				scrollTrigger: {
-					trigger: sections[0],
-					start: isMobile ? 'top 60%' : 'top 40%',
-					end: 'top top',
-					scrub: isMobile ? 0.5 : 0,
-					markers: false,
-				},
-				y: isMobile ? -150 : -300,
-				opacity: 0,
-				ease: 'none',
-			});
-		}
+		// Calculate sticky header height
+		const getStickyHeaderHeight = () => {
+			if (headingRef.current) {
+				return headingRef.current.offsetHeight;
+			}
+			return 0;
+		};
 
 		// Only pin on desktop/tablet landscape
 		if (!isMobile) {
+			const headerHeight = getStickyHeaderHeight();
+			
 			sections.forEach((section, index) => {
 				if (!section) return;
 
-				// Pin each section so next one overlaps
+				// Set initial padding to account for sticky header
+				section.style.paddingTop = `${headerHeight}px`;
+
+				// Pin each section so next one overlaps completely
 				ScrollTrigger.create({
 					trigger: section,
 					start: 'top top',
-					end: '+=100%',
+					end: () => {
+						// Increase scroll distance so previous section stays pinned longer
+						// This prevents the previous feature from moving up when the next one overlaps
+						if (index === sections.length - 1) {
+							return '+=300%'; // Last section gets even more scroll distance
+						}
+						return '+=200%'; // Each section needs 200% scroll distance to prevent early unpinning
+					},
 					pin: true,
 					pinSpacing: false,
 					markers: false,
+					pinnedContainer: section,
+					anticipatePin: 1,
 				});
 			});
 		}
@@ -314,6 +320,15 @@ const GettingStarted = () => {
 		// Refresh ScrollTrigger on resize
 		const handleResize = () => {
 			ScrollTrigger.refresh();
+			// Recalculate padding on resize
+			if (!isMobile) {
+				const headerHeight = getStickyHeaderHeight();
+				sections.forEach((section) => {
+					if (section) {
+						section.style.paddingTop = `${headerHeight}px`;
+					}
+				});
+			}
 		};
 
 		window.addEventListener('resize', handleResize);
@@ -346,38 +361,48 @@ const GettingStarted = () => {
 	};
 
 	return (
-		<section ref={sectionRef} className="relative bg-white text-black py-8 sm:py-12 md:py-16 lg:py-20">
-			<div ref={headingRef} className="max-w-10xl mx-auto py-4 px-4 sm:px-6 md:px-8 lg:px-12">
+		<section ref={sectionRef} className="relative bg-white text-black py-2 sm:py-12 md:py-16 lg:py-2">
+			<div ref={headingRef} className="sticky top-0 z-50 bg-white max-w-10xl mx-auto py-2 sm:py-3 md:py-4 px-4 sm:px-6 md:px-8 lg:px-12">
 				<h2 
-					className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-[10rem] mb-3 max-w-full text-black leading-tight"
+					className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-[10rem] mb-2 sm:mb-3 max-w-full text-black leading-tight"
 					style={{ fontFamily: 'klaft, sans-serif' }}
 				>
 					Built for <span className="inline-block min-w-[200px] sm:min-w-[300px] md:min-w-[400px] lg:min-w-[500px] xl:min-w-[600px] 2xl:min-w-[800px] text-orange-500">{animatedText}</span>
 				</h2>
+			{/* Step Indicators - Fixed Horizontal Navigation */}
+			<div className="bg-white py-2 sm:py-3 md:py-4 px-4 sm:px-6 md:px-8 lg:px-12">
+				<div className="max-w-7xl mx-auto flex items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
+					{features.map((feature, index) => (
+						<div key={feature.step} className="flex items-center gap-2 sm:gap-3">
+							<div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300 ${
+								index === 0 ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
+							}`}>
+								<span className={`font-semibold text-xs sm:text-sm ${
+									index === 0 ? 'text-white' : 'text-gray-400'
+								}`}>
+									{feature.step}
+								</span>
+							</div>
+							{index < features.length - 1 && (
+								<div className="hidden sm:block w-8 md:w-12 lg:w-16 h-px bg-gray-300"></div>
+							)}
+						</div>
+					))}
+				</div>
 			</div>
+			</div>
+
+			{/* Features Content */}
 			{features.map((feature, index) => (
 				<div 
 					key={feature.step} 
 					ref={(el) => (featureRefs.current[index] = el)}
-					className="min-h-screen overflow-hidden"
+					className="min-h-[50vh] lg:min-h-screen overflow-hidden"
 				>
-					<div className="w-full min-h-screen relative bg-white flex flex-col lg:flex-row">
-						{/* Left Section - Responsive positioning */}
-						<div className="w-full lg:w-1/2 flex items-start p-4 sm:p-6 md:p-8 lg:pt-16 lg:pl-16 lg:absolute lg:top-0 lg:left-0 lg:h-full">
+					<div className="w-full min-h-[50vh] lg:min-h-[90vh] relative bg-white flex flex-col lg:flex-row">
+						{/* Left Section - Stick to top */}
+						<div className="w-full lg:w-1/2 flex items-start p-4 sm:p-6 md:p-8 lg:pt-8 lg:pl-16 lg:absolute lg:top-0 lg:left-0 lg:h-full">
 							<div className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-9 max-w-2xl">
-								{/* Step Indicator */}
-								<div className="flex items-center gap-2 sm:gap-3">
-									<div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-2 border-orange-500 flex items-center justify-center shrink-0">
-										<span className="text-orange-500 font-semibold text-sm sm:text-base">
-											{feature.step}
-										</span>
-									</div>
-									<div className="flex-1 h-px bg-gray-300 max-w-[60px] sm:max-w-20 md:max-w-[100px]"></div>
-									<div className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-600 font-semibold whitespace-nowrap">
-										Step {feature.step} of {features.length}
-									</div>
-								</div>
-
 								{/* Main Content */}
 								<div>
 									<h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight mb-2 sm:mb-3 md:mb-4 text-black">
@@ -412,9 +437,9 @@ const GettingStarted = () => {
 							</div>
 						</div>
 
-						{/* Right Section - Responsive positioning */}
-						<div className="w-full lg:w-[55vw] lg:h-[70vh] mt-8 lg:mt-0 lg:absolute lg:bottom-4 lg:right-4 xl:bottom-8 xl:right-8 p-4 lg:p-0">
-							<div className="relative w-full h-full min-h-[400px] sm:min-h-[500px] md:min-h-[600px] lg:min-h-0">
+						{/* Right Section - Stick to top */}
+						<div className="w-full lg:w-[55vw] lg:h-auto mt-8 lg:mt-0 lg:absolute lg:top-0 lg:right-4 xl:right-8 p-4 lg:p-0">
+							<div className="relative w-full h-full min-h-[400px] sm:min-h-[500px] md:min-h-[600px] lg:min-h-[70vh]">
 								<div className="relative bg-white rounded-xl sm:rounded-2xl border border-gray-300 shadow-2xl overflow-hidden w-full h-full">
 									{/* Browser Chrome */}
 									<div className="bg-gray-100 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 border-b border-gray-300 flex items-center gap-1.5 sm:gap-2">
@@ -426,7 +451,7 @@ const GettingStarted = () => {
 									</div>
 
 									{/* Modal Content */}
-									<div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-12">
+									<div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-12 pb-1 sm:pb-2 md:pb-3 lg:pb-4 xl:pb-4">
 										<div className="bg-orange-50 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 lg:p-6 backdrop-blur-sm border border-orange-200">
 											{/* Progress Dots */}
 											<div className="flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
