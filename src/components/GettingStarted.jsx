@@ -350,7 +350,7 @@ const GettingStarted = () => {
 					// Smooth scrolling for better performance
 					fastScrollEnd: true,
 					preventOverlaps: true,
-					// Animate step indicator when feature enters
+					// Animate step indicator when feature enters viewport
 					onEnter: () => {
 						const stepNumber = index + 1;
 						setVisibleSteps(prev => {
@@ -360,7 +360,7 @@ const GettingStarted = () => {
 							return prev;
 						});
 					},
-					// Optional: Remove step when scrolling back up
+					// Remove step when scrolling back up for smooth reverse animation
 					onLeaveBack: () => {
 						if (index > 0) {
 							const stepNumber = index + 1;
@@ -439,36 +439,41 @@ const GettingStarted = () => {
 						return (
 							<div 
 								key={feature.step} 
-								className={`flex items-center gap-2 sm:gap-3 transition-all duration-700 ease-out ${
+								className={`flex items-center gap-2 sm:gap-3 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
 									isVisible 
 										? 'translate-x-0 opacity-100' 
-										: 'translate-x-[200%] opacity-0'
+										: 'translate-x-[300%] opacity-0 pointer-events-none'
 								}`}
 								style={{
-									transitionDelay: isVisible ? `${index * 100}ms` : '0ms'
+									willChange: 'transform, opacity'
 								}}
 							>
-								<div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-500 ${
+								<div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-500 ease-out shadow-sm ${
 									isActive 
-										? 'border-orange-500 bg-orange-500 scale-110' 
+										? 'border-orange-500 bg-orange-500 scale-110 shadow-orange-200' 
 										: isVisible 
-											? 'border-gray-400 bg-transparent' 
+											? 'border-gray-400 bg-white hover:border-orange-300 hover:scale-105' 
 											: 'border-gray-300'
 								}`}>
-									<span className={`font-semibold text-xs sm:text-sm transition-colors duration-300 ${
-										isActive ? 'text-white' : 'text-gray-400'
+									<span className={`font-semibold text-xs sm:text-sm transition-all duration-300 ${
+										isActive ? 'text-white scale-100' : 'text-gray-400 scale-95'
 									}`}>
 										{feature.step}
 									</span>
 								</div>
-								{index < features.length - 1 && isVisible && (
-									<div className={`hidden sm:block w-8 md:w-12 lg:w-16 h-px bg-gray-300 transition-all duration-500 ${
-										isVisible ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'
-									}`}
-									style={{
-										transformOrigin: 'left',
-										transitionDelay: isVisible ? `${index * 100 + 200}ms` : '0ms'
-									}}
+								{index < features.length - 1 && (
+									<div 
+										className={`hidden sm:block w-8 md:w-12 lg:w-16 h-px transition-all duration-500 ease-out ${
+											isVisible && visibleSteps.includes(feature.step + 1)
+												? 'bg-gray-300 scale-x-100 opacity-100' 
+												: isVisible 
+													? 'bg-gray-200 scale-x-50 opacity-50'
+													: 'bg-gray-200 scale-x-0 opacity-0'
+										}`}
+										style={{
+											transformOrigin: 'left',
+											willChange: 'transform, opacity'
+										}}
 									></div>
 								)}
 							</div>
