@@ -17,8 +17,12 @@ const Home = () => {
       {showIntro && <LogoIntro onComplete={handleIntroComplete} />}
       
       <div className={`transition-opacity duration-1000 ${startMainAnimation ? 'opacity-100' : 'opacity-0'}`}>
-        <Hero />
-        <GettingStarted />
+        <div id="home">
+          <Hero />
+        </div>
+        <div id="features">
+          <GettingStarted />
+        </div>
       </div>
     </div>
   );
