@@ -127,30 +127,45 @@ const Navbar = () => {
     // Initial load animation
     const logo = logoRef.current;
     const navItems = navItemsRef.current;
+    const hamburger = hamburgerRef.current;
 
     if (logo) {
-      gsap.set(logo, { scale: 0, opacity: 0 });
+      gsap.set(logo, { opacity: 0, y: -30 });
       gsap.to(logo, {
-        scale: 1,
         opacity: 1,
+        y: 0,
         duration: 0.8,
         delay: 2,
-        ease
+        ease: 'power3.out'
       });
     }
 
     if (navItems) {
-      gsap.set(navItems, { width: 0, overflow: 'hidden' });
-      gsap.to(navItems, {
-        width: 'auto',
-        duration: 0.8,
-        delay: 2.2,
-        ease
+      const pills = navItems.querySelectorAll('.pill');
+      gsap.set(pills, { opacity: 0, y: -20 });
+      gsap.to(pills, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        delay: 2.3,
+        stagger: 0.1,
+        ease: 'power3.out'
+      });
+    }
+
+    if (hamburger) {
+      gsap.set(hamburger, { opacity: 0, scale: 0 });
+      gsap.to(hamburger, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        delay: 2,
+        ease: 'back.out(1.7)'
       });
     }
 
     return () => window.removeEventListener('resize', onResize);
-  }, [items, ease]);
+  }, [items]);
 
   const handleEnter = i => {
     const tl = tlRefs.current[i];
