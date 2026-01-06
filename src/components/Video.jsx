@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import vid1 from '../assets/vid1.mp4';
+import vid1 from '../assets/animated.mp4';
 
 const Video = () => {
   const videoRef = useRef(null);
@@ -20,7 +20,7 @@ const Video = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen overflow-hidden fixed top-0 left-0 -z-10">
+    <div className="w-full h-screen overflow-hidden absolute top-0 left-0">
       <video 
         ref={videoRef}
         autoPlay 

@@ -83,7 +83,7 @@ const Hero = () => {
             backgroundColor: 'white',
           }}
         >
-          <div className="hero-video-container w-full h-full will-change-transform blur-lg">
+          <div className="hero-video-container w-full h-full will-change-transform">
             <Video />
           </div>
         </div>
